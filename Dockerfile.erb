@@ -4,7 +4,8 @@ FROM bcit.io/alpine:3.18
 
 RUN apk upgrade --no-cache \
  && apk add --no-cache \
-        keepalived
+        keepalived \
+        curl
 
 RUN mkdir -p /etc/keepalived
 

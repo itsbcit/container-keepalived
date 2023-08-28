@@ -1,11 +1,12 @@
 FROM bcit.io/alpine:3.18
 
 LABEL maintainer="jesse@weisner.ca"
-LABEL build_id="1693185461"
+LABEL build_id="1693186090"
 
 RUN apk upgrade --no-cache \
  && apk add --no-cache \
-        keepalived
+        keepalived \
+        curl
 
 RUN mkdir -p /etc/keepalived
 
