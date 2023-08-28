@@ -1,6 +1,7 @@
 FROM bcit.io/alpine:3.18
 
-<%= snippet('labels', binding) -%>
+LABEL maintainer="jesse@weisner.ca"
+LABEL build_id="1693185461"
 
 RUN apk upgrade --no-cache \
  && apk add --no-cache \

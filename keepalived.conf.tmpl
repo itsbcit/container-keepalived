@@ -1,0 +1,45 @@
+vrrp_script check_service {
+  script   "{{ .Env.KEEPALIVED_CHECK_SCRIPT }}"
+  interval {{ .Env.KEEPALIVED_CHECK_SCRIPT_INTERVAL }}
+  weight   {{ .Env.KEEPALIVED_CHECK_SCRIPT_WEIGHT }}
+  user     {{ .Env.KEEPALIVED_SCRIPT_USER }}
+}
+
+global_defs {
+  enable_script_security
+  max_auto_priority         99
+}
+
+vrrp_instance {{ .Env.KEEPALIVED_SERVICE_NAME }} {
+  interface                 {{ if .Env.KEEPALIVED_INTERFACE }}{{ .Env.KEEPALIVED_INTERFACE }}{{else}}{{ .Env.PRIMARY_INTERFACE }}{{ end }}
+{{- if .Env.KEEPALIVED_INITIAL_STATE }}
+  priority                  {{ .Env.KEEPALIVED_INITIAL_STATE }}{{ end }}
+  virtual_router_id         {{ .Env.KEEPALIVED_ROUTER_ID }}
+{{- if .Env.KEEPALIVED_PRIORITY }}
+  priority                  {{ .Env.KEEPALIVED_PRIORITY }}{{ end }}
+{{- if .Env.KEEPALIVED_NOPREEMPT }}
+  {{ .Env.KEEPALIVED_NOPREEMPT}}{{ end }}
+
+  authentication {
+    auth_type PASS
+    auth_pass {{ .Env.KEEPALIVED_AUTH_PASS }}
+  }
+
+  track_script {
+    check_service
+  }
+
+  virtual_ipaddress {
+  {{- range split .Env.KEEPALIVED_VIRTUAL_IPADDRESSES "," }}
+    {{.}}
+  {{- end }}
+  }
+
+  unicast_src_ip {{ if .Env.KEEPALIVED_SOURCE_IP }}{{ .Env.KEEPALIVED_SOURCE_IP }}{{ else }}{{ .Env.PRIMARY_ADDRESS }}{{end}}
+
+  unicast_peer {
+  {{- range split .Env.KEEPALIVED_UNICAST_PEERS "," }}
+    {{.}}
+  {{- end }}
+  }
+}
