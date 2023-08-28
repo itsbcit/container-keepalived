@@ -1,0 +1,17 @@
+[Unit]
+Description=Keepalived
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/podman run --replace \
+    --name keepalived \
+    --net host \
+    --cap-add NET_ADMIN \
+    --cap-add NET_RAW \
+    -e KEEPALIVED_AUTH_PASS=changeme \
+    -e KEEPALIVED_VIRTUAL_IPADDRESSES=169.254.1.195 \
+    -e KEEPALIVED_UNICAST_PEERS=169.254.1.193,169.254.1.194 \
+    bcit.io/library/keepalived:latest
+[Install]
+WantedBy=multi-user.target
